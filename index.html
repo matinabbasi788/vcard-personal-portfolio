@@ -5,12 +5,45 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Matin Abbasi</title>
+  <title>Matin Abbasi - System Administrator & Software Developer</title>
+  <meta name="description" content="System Administrator and Software Developer passionate about Linux, Python, and building scalable applications. Currently working at Pars Pack.">
+  <meta name="keywords" content="Matin Abbasi, System Administrator, Software Developer, Linux, Python, DevOps, Iran, Isfahan">
+  <meta name="author" content="Matin Abbasi">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://m4t1n.ir/">
+  <meta property="og:title" content="Matin Abbasi - System Administrator & Software Developer">
+  <meta property="og:description" content="System Administrator and Software Developer passionate about Linux, Python, and building scalable applications. Currently working at Pars Pack.">
+  <meta property="og:image" content="https://m4t1n.ir/assets/images/og-image.png">
+  <meta property="og:image:secure_url" content="https://m4t1n.ir/assets/images/og-image.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Matin Abbasi - System Administrator & Software Developer">
+  <meta property="og:site_name" content="Matin Abbasi Portfolio">
+  <meta property="og:locale" content="en_US">
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://m4t1n.ir/">
+  <meta name="twitter:title" content="Matin Abbasi - System Administrator & Software Developer">
+  <meta name="twitter:description" content="System Administrator and Software Developer passionate about Linux, Python, and building scalable applications. Currently working at Pars Pack.">
+  <meta name="twitter:image" content="https://m4t1n.ir/assets/images/og-image.png">
+  <meta name="twitter:image:alt" content="Matin Abbasi - System Administrator & Software Developer">
+  
+  <!-- Additional Meta Tags -->
+  <meta name="theme-color" content="#FFD700">
+  <meta name="msapplication-TileColor" content="#FFD700">
+  <meta name="msapplication-TileImage" content="./assets/images/my-avatar.png">
 
   <!--
-    - favicon
+    - favicon (using avatar image)
   -->
-  <link rel="shortcut icon" href="./assets/images/logo.ico" type="image/x-icon">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/images/my-avatar.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/images/my-avatar.png">
+  <link rel="shortcut icon" href="./assets/images/my-avatar.png" type="image/png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/images/my-avatar.png">
 
   <!--
     - custom css link
@@ -171,6 +204,10 @@
             <button class="navbar-link  active" data-nav-link>Home</button>
           </li>
 
+          <li class="navbar-item">
+            <a href="https://blog.m4t1n.ir/" class="navbar-link">Blog</a>
+          </li>
+
           <!-- <li class="navbar-item"> -->
           <!--   <button class="navbar-link" data-nav-link>Resume</button> -->
           <!-- </li> -->
@@ -300,7 +337,7 @@
 
           <div class="title-wrapper">
             <div class="icon-box">
-              <ion-icon name="book-outline"></ion-icon>
+              <ion-icon name="briefcase-outline"></ion-icon>
             </div>
 
             <h3 class="h3">Experience</h3>
@@ -360,85 +397,75 @@
 
           <h3 class="h3 skills-title">My skills</h3>
 
-          <ul class="skills-list content-card">
+          <div class="skills-grid">
 
-            <li class="skills-item">
-
-              <div class="title-wrapper">
-                <h5 class="h5">Linux</h5>
-                <data value="80">80%</data>
+            <div class="skill-card" data-skill="80">
+              <div class="skill-icon">
+                <ion-icon name="terminal-outline"></ion-icon>
               </div>
-
-              <div class="skill-progress-bg">
-                <div class="skill-progress-fill" style="width: 80%;"></div>
+              <h5 class="h5 skill-name">Linux</h5>
+              <div class="skill-level">
+                <span class="skill-percentage">80%</span>
+                <div class="skill-indicator"></div>
               </div>
+            </div>
 
-            </li>
-            <li class="skills-item">
-
-              <div class="title-wrapper">
-                <h5 class="h5">Python</h5>
-                <data value="90">90%</data>
+            <div class="skill-card" data-skill="90">
+              <div class="skill-icon">
+                <ion-icon name="code-slash-outline"></ion-icon>
               </div>
-
-              <div class="skill-progress-bg">
-                <div class="skill-progress-fill" style="width: 90%;"></div>
+              <h5 class="h5 skill-name">Python</h5>
+              <div class="skill-level">
+                <span class="skill-percentage">90%</span>
+                <div class="skill-indicator"></div>
               </div>
+            </div>
 
-            </li>
-            <li class="skills-item">
-
-              <div class="title-wrapper">
-                <h5 class="h5">Web design</h5>
-                <data value="40">40%</data>
+            <div class="skill-card" data-skill="40">
+              <div class="skill-icon">
+                <ion-icon name="color-palette-outline"></ion-icon>
               </div>
-
-              <div class="skill-progress-bg">
-                <div class="skill-progress-fill" style="width: 40%;"></div>
+              <h5 class="h5 skill-name">Web design</h5>
+              <div class="skill-level">
+                <span class="skill-percentage">40%</span>
+                <div class="skill-indicator"></div>
               </div>
+            </div>
 
-            </li>
-
-            <li class="skills-item">
-
-              <div class="title-wrapper">
-                <h5 class="h5">Graphic design</h5>
-                <data value="50">50%</data>
+            <div class="skill-card" data-skill="50">
+              <div class="skill-icon">
+                <ion-icon name="image-outline"></ion-icon>
               </div>
-
-              <div class="skill-progress-bg">
-                <div class="skill-progress-fill" style="width: 50%;"></div>
+              <h5 class="h5 skill-name">Graphic design</h5>
+              <div class="skill-level">
+                <span class="skill-percentage">50%</span>
+                <div class="skill-indicator"></div>
               </div>
+            </div>
 
-            </li>
-
-            <li class="skills-item">
-
-              <div class="title-wrapper">
-                <h5 class="h5">Branding</h5>
-                <data value="90">90%</data>
+            <div class="skill-card" data-skill="90">
+              <div class="skill-icon">
+                <ion-icon name="star-outline"></ion-icon>
               </div>
-
-              <div class="skill-progress-bg">
-                <div class="skill-progress-fill" style="width: 90%;"></div>
+              <h5 class="h5 skill-name">Branding</h5>
+              <div class="skill-level">
+                <span class="skill-percentage">90%</span>
+                <div class="skill-indicator"></div>
               </div>
+            </div>
 
-            </li>
-
-            <li class="skills-item">
-
-              <div class="title-wrapper">
-                <h5 class="h5">WordPress</h5>
-                <data value="50">50%</data>
+            <div class="skill-card" data-skill="50">
+              <div class="skill-icon">
+                <ion-icon name="layers-outline"></ion-icon>
               </div>
-
-              <div class="skill-progress-bg">
-                <div class="skill-progress-fill" style="width: 50%;"></div>
+              <h5 class="h5 skill-name">WordPress</h5>
+              <div class="skill-level">
+                <span class="skill-percentage">50%</span>
+                <div class="skill-indicator"></div>
               </div>
+            </div>
 
-            </li>
-
-          </ul>
+          </div>
 
         </section>
 
