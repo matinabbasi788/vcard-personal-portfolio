@@ -151,7 +151,8 @@ const manPages = {
     'tree': 'tree - list contents of directories in a tree-like format.',
     'sudo': 'sudo - execute a command as another user, usually the superuser.',
     'neofetch': 'neofetch - a CLI system information tool.',
-    'theme': 'theme [name] - change terminal appearance. Themes: ubuntu, dracula, classic.',
+    'themes': 'themes - list all available terminal color themes.',
+    'theme': 'theme [name] - change terminal color theme. Available: dracula, monokai, nord, solarized, matrix, cyberpunk, default.',
     'uname': 'uname - print system information. Option: -a (all information).',
     'man': 'man [command] - format and display the on-line manual pages.',
     'crt': 'crt [on|off] - toggles the CRT scanline effect.',
@@ -161,6 +162,103 @@ const manPages = {
     'banner': 'banner - show welcome banner.'
 };
 
+// Terminal Themes
+const THEMES = {
+    dracula: {
+        name: 'Dracula',
+        description: '🧛 Dark purple vampire theme',
+        background: '#282a36',
+        foreground: '#f8f8f2',
+        user: '#ff79c6',
+        path: '#8be9fd',
+        error: '#ff5555',
+        success: '#50fa7b',
+        warning: '#f1fa8c',
+        info: '#bd93f9',
+        prompt: '#ff79c6'
+    },
+    monokai: {
+        name: 'Monokai',
+        description: '🎨 Vibrant neon colors',
+        background: '#272822',
+        foreground: '#f8f8f2',
+        user: '#f92672',
+        path: '#66d9ef',
+        error: '#f92672',
+        success: '#a6e22e',
+        warning: '#e6db74',
+        info: '#ae81ff',
+        prompt: '#f92672'
+    },
+    nord: {
+        name: 'Nord',
+        description: '❄️ Arctic, north-bluish theme',
+        background: '#2e3440',
+        foreground: '#d8dee9',
+        user: '#88c0d0',
+        path: '#81a1c1',
+        error: '#bf616a',
+        success: '#a3be8c',
+        warning: '#ebcb8b',
+        info: '#b48ead',
+        prompt: '#88c0d0'
+    },
+    solarized: {
+        name: 'Solarized Dark',
+        description: '☀️ Precision colors for machines',
+        background: '#002b36',
+        foreground: '#839496',
+        user: '#268bd2',
+        path: '#2aa198',
+        error: '#dc322f',
+        success: '#859900',
+        warning: '#b58900',
+        info: '#6c71c4',
+        prompt: '#268bd2'
+    },
+    matrix: {
+        name: 'Matrix',
+        description: '🟢 Follow the white rabbit',
+        background: '#0d0d0d',
+        foreground: '#00ff00',
+        user: '#00ff00',
+        path: '#00cc00',
+        error: '#ff0000',
+        success: '#00ff00',
+        warning: '#ffff00',
+        info: '#00ffff',
+        prompt: '#00ff00'
+    },
+    cyberpunk: {
+        name: 'Cyberpunk',
+        description: '🌃 Neon lights and dark nights',
+        background: '#0a0e27',
+        foreground: '#00f0ff',
+        user: '#ff006e',
+        path: '#ffbe0b',
+        error: '#ff006e',
+        success: '#06ffa5',
+        warning: '#ffbe0b',
+        info: '#8338ec',
+        prompt: '#ff006e'
+    },
+    default: {
+        name: 'Default',
+        description: '🖥️ Classic terminal green',
+        background: '#0c0c0c',
+        foreground: '#cccccc',
+        user: '#00ff00',
+        path: '#3b8eea',
+        error: '#ff5555',
+        success: '#26a269',
+        warning: '#ffaa00',
+        info: '#00ffff',
+        prompt: '#00ff00'
+    }
+};
+
 // Configuration
 const BOOT_TIME = "Feb 26 11:30";
 const SKIP_BOOT = false;
+const SUDO_PASSWORD = "13183"; // Password for sudo commands
+const DEFAULT_THEME = 'dracula'; // Default theme

@@ -3023,13 +3023,24 @@ textarea.form-input::-webkit-resizer { display: none; }
   padding: 20px;
   overflow-y: auto;
   overflow-x: auto;
-  background: #0c0c0c;
-  color: #cccccc;
+  background: var(--theme-background, #0c0c0c);
+  color: var(--theme-foreground, #cccccc);
   font-family: 'Consolas', 'Courier New', Courier, monospace;
   font-size: 14px;
   line-height: 1.4;
   position: relative;
   box-sizing: border-box;
+  
+  /* CSS Variables for theme colors */
+  --theme-background: #0c0c0c;
+  --theme-foreground: #cccccc;
+  --theme-user: #00ff00;
+  --theme-path: #3b8eea;
+  --theme-error: #ff5555;
+  --theme-success: #26a269;
+  --theme-warning: #ffaa00;
+  --theme-info: #00ffff;
+  --theme-prompt: #00ff00;
 }
 
 .terminal-body::-webkit-scrollbar {
@@ -3088,21 +3099,21 @@ textarea.form-input::-webkit-resizer { display: none; }
 }
 
 .terminal-body .user {
-  color: #00ff00;
+  color: var(--theme-user, #00ff00);
   font-weight: bold;
   white-space: nowrap;
   display: inline;
 }
 
 .terminal-body .path {
-  color: #3b8eea;
+  color: var(--theme-path, #3b8eea);
   font-weight: bold;
   white-space: nowrap;
   display: inline;
 }
 
 .terminal-body .ls-dir {
-  color: #3b8eea;
+  color: var(--theme-path, #3b8eea);
   font-weight: bold;
   margin-right: 15px;
   white-space: nowrap;
@@ -3110,14 +3121,14 @@ textarea.form-input::-webkit-resizer { display: none; }
 }
 
 .terminal-body .ls-file {
-  color: #cccccc;
+  color: var(--theme-foreground, #cccccc);
   margin-right: 15px;
   white-space: nowrap;
   display: inline;
 }
 
 .terminal-body .ls-exec {
-  color: #26a269;
+  color: var(--theme-success, #26a269);
   font-weight: bold;
   margin-right: 15px;
   white-space: nowrap;
@@ -3125,18 +3136,18 @@ textarea.form-input::-webkit-resizer { display: none; }
 }
 
 .terminal-body .error {
-  color: #ff5555;
+  color: var(--theme-error, #ff5555);
   white-space: nowrap;
   display: inline;
 }
 
 .terminal-body .success {
-  color: #26a269;
+  color: var(--theme-success, #26a269);
   white-space: nowrap;
   display: inline;
 }
 
-.terminal-body span {
+.terminal-body span:not(.neofetch-container span):not(.neofetch-container *) {
   white-space: nowrap;
   display: inline;
 }
@@ -3167,11 +3178,11 @@ textarea.form-input::-webkit-resizer { display: none; }
   flex: 1;
   background: transparent;
   border: none;
-  color: #cccccc;
+  color: var(--theme-foreground, #cccccc);
   font-family: 'Consolas', 'Courier New', Courier, monospace;
   font-size: 14px;
   outline: none;
-  caret-color: #cccccc;
+  caret-color: var(--theme-user, #cccccc);
   padding: 0;
   margin: 0;
   line-height: 1.4;
@@ -3215,17 +3226,30 @@ textarea.form-input::-webkit-resizer { display: none; }
   gap: 30px;
   color: #cccccc;
   margin: 10px 0;
+  white-space: pre;
+}
+
+.neofetch-container * {
+  white-space: normal;
 }
 
 .ascii-logo {
   color: #bd93f9;
   font-weight: bold;
   line-height: 1.1;
+  white-space: pre;
+  flex-shrink: 0;
 }
 
 .system-info {
   display: flex;
   flex-direction: column;
+  white-space: normal;
+  flex: 1;
+}
+
+.system-info > div {
+  white-space: normal;
 }
 
 .info-header {
@@ -3233,11 +3257,14 @@ textarea.form-input::-webkit-resizer { display: none; }
   font-weight: bold;
   border-bottom: 1px solid #cccccc;
   margin-bottom: 5px;
+  white-space: normal;
 }
 
 .info-label {
   color: #bd93f9;
   font-weight: bold;
+  white-space: nowrap;
+  display: inline;
 }
 
 /* Responsive */

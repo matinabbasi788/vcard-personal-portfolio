@@ -11,6 +11,7 @@ const inputLine = document.getElementById('input-line');
 const pathDisplayElement = document.getElementById('current-path-display');
 const promptContainer = document.getElementById('prompt-container');
 const crtOverlay = document.getElementById('crt-overlay');
+const terminalBody = document.querySelector('.terminal-body');
 
 // Terminal State
 let currentPath = [];
@@ -180,8 +181,87 @@ function executeCommand(input) {
         isWaitingForPassword = false;
         inputElement.type = 'text';
         promptContainer.style.display = 'inline';
-        printLine(`<span class="error">Sorry, try again.</span>`);
-        printLine(`<span class="error">matin is not in the sudoers file. This incident will be reported.</span>`);
+        
+        // Check password
+        if (trimmed === SUDO_PASSWORD) {
+            printLine(`<span class="success">✓ Authentication successful</span>`);
+            printLine('');
+            
+            // Execute the sudo command that was stored
+            const sudoCmd = window.pendingSudoCommand;
+            window.pendingSudoCommand = null;
+            
+            if (sudoCmd === 'help') {
+                printLine('<span style="color:#00ffff;font-weight:bold">╔══════════════════════════════════════════════════════════════╗</span>');
+                printLine('<span style="color:#00ffff;font-weight:bold">║</span>  <span style="color:#ffaa00;font-size:16px;font-weight:bold">🔐 SUDO Commands (Admin Only)</span>                           <span style="color:#00ffff;font-weight:bold">║</span>');
+                printLine('<span style="color:#00ffff;font-weight:bold">╚══════════════════════════════════════════════════════════════╝</span>');
+                printLine('');
+                printLine('<span style="color:#ff5555">⚠️  CAUTION: You have root access. Be careful!</span>');
+                printLine('');
+                printLine('<span class="user">sudo shutdown</span>      - Shutdown the system');
+                printLine('<span class="user">sudo reboot</span>        - Reboot the system');
+                printLine('<span class="user">sudo install [pkg]</span> - Install a package');
+                printLine('<span class="user">sudo update</span>        - Update system packages');
+                printLine('<span class="user">sudo whoami</span>        - Show current user (root)');
+                printLine('<span class="user">sudo secret</span>        - 👀 Reveal a secret...');
+            } else if (sudoCmd === 'whoami') {
+                printLine('<span style="color:#ff5555;font-weight:bold">root</span>');
+            } else if (sudoCmd === 'shutdown') {
+                printLine('<span class="boot-ok">[  OK  ]</span> Stopped target Graphical Interface');
+                printLine('<span class="boot-ok">[  OK  ]</span> Stopped target Multi-User System');
+                printLine('<span style="color:#ffaa00">         Stopping Session Manager...</span>');
+                printLine('<span style="color:#ffaa00">         Stopping User Login Management...</span>');
+                printLine('<span class="boot-ok">[  OK  ]</span> Stopped target Network');
+                printLine('<span style="color:#ff5555;font-weight:bold">System is going down for poweroff NOW!</span>');
+                setTimeout(() => {
+                    printLine('');
+                    printLine('<span style="color:#555">Connection closed by remote host.</span>');
+                    inputElement.disabled = true;
+                }, 1000);
+            } else if (sudoCmd === 'reboot') {
+                printLine('<span class="boot-ok">[  OK  ]</span> Reached target Reboot');
+                printLine('<span style="color:#ffaa00">         Rebooting...</span>');
+                setTimeout(() => {
+                    outputElement.innerHTML = '';
+                    inputElement.disabled = false;
+                    bootSequence();
+                }, 1500);
+            } else if (sudoCmd && sudoCmd.startsWith('install ')) {
+                const pkg = sudoCmd.split(' ')[1];
+                printLine(`Reading package lists... Done`);
+                printLine(`Building dependency tree... Done`);
+                printLine(`Reading state information... Done`);
+                printLine(`The following NEW packages will be installed:`);
+                printLine(`  ${pkg}`);
+                printLine(`0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.`);
+                printLine(`<span class="success">✓ Package '${pkg}' installed successfully!</span>`);
+            } else if (sudoCmd === 'update') {
+                printLine('Hit:1 http://ir.archive.ubuntu.com/ubuntu jammy InRelease');
+                printLine('Get:2 http://security.ubuntu.com/ubuntu jammy-security InRelease [110 kB]');
+                printLine('Get:3 http://ir.archive.ubuntu.com/ubuntu jammy-updates InRelease [119 kB]');
+                printLine('Fetched 229 kB in 2s (114 kB/s)');
+                printLine('Reading package lists... Done');
+                printLine('<span class="success">✓ System packages updated successfully!</span>');
+            } else if (sudoCmd === 'secret') {
+                printLine('');
+                printLine('<span style="color:#00ffff;font-weight:bold">╔══════════════════════════════════════════════════════════════╗</span>');
+                printLine('<span style="color:#00ffff;font-weight:bold">║</span>  <span style="color:#ffaa00;font-size:18px;font-weight:bold">🎉 SECRET UNLOCKED!</span>                                    <span style="color:#00ffff;font-weight:bold">║</span>');
+                printLine('<span style="color:#00ffff;font-weight:bold">╚══════════════════════════════════════════════════════════════╝</span>');
+                printLine('');
+                printLine('<span style="color:#50fa7b">🚀 You found the hidden message!</span>');
+                printLine('');
+                printLine('<span style="color:#ff79c6">"The best way to predict the future is to invent it."</span>');
+                printLine('                                        <span style="color:#8be9fd">- Alan Kay</span>');
+                printLine('');
+                printLine('<span style="color:#f1fa8c">💡 Fun fact: This terminal was coded with ❤️ in Isfahan!</span>');
+            } else {
+                printLine(`<span class="error">sudo: ${sudoCmd}: command not found</span>`);
+                printLine('Try "sudo help" for available commands.');
+            }
+        } else {
+            printLine(`<span class="error">Sorry, try again.</span>`);
+            printLine(`<span class="error">matin is not in the sudoers file. This incident will be reported.</span>`);
+        }
         return;
     }
 
@@ -202,32 +282,37 @@ function executeCommand(input) {
 
     switch (cmd) {
         case 'help':
-            printLine(`Available commands:
-  <span class="user">ls</span> [-la]     - List files (color-coded)
-  <span class="user">cd</span> [dir]       - Change directory
-  <span class="user">cat</span> [file]     - View file
-  <span class="user">pwd</span>            - Show current directory path
-  <span class="user">tree</span>           - Visualize directories
-  <span class="user">clear</span>          - Clear the terminal
-  
-  <span style="color:#ffaa00">System Info:</span>
-  <span class="user">whoami</span>         - Show current user
-  <span class="user">date</span>           - Show current date
-  <span class="user">neofetch</span>       - System information display
-  <span class="user">uname -a</span>       - Kernel information
-  <span class="user">banner</span>         - Show welcome banner
-  
-  <span style="color:#ffaa00">Personal:</span>
-  <span class="user">about</span>          - About Matin Abbasi
-  <span class="user">skills</span>         - Technical skills
-  <span class="user">contact</span>        - Contact information
-  
-  <span style="color:#ffaa00">Misc:</span>
-  <span class="user">echo</span> [text]    - Echo text
-  <span class="user">man</span> [cmd]      - Manual pages
-  <span class="user">crt</span> [on|off]   - Toggle CRT effect
-  <span class="user">sudo</span>           - Administrator access 🔒
-  `);
+            printLine('<div class="help-output">Available commands:');
+            printLine('  <span class="user">ls</span> [-la]     - List files (color-coded)');
+            printLine('  <span class="user">cd</span> [dir]       - Change directory');
+            printLine('  <span class="user">cat</span> [file]     - View file');
+            printLine('  <span class="user">pwd</span>            - Show current directory path');
+            printLine('  <span class="user">tree</span>           - Visualize directories');
+            printLine('  <span class="user">clear</span>          - Clear the terminal');
+            printLine('');
+            printLine('  <span style="color:#ffaa00">System Info:</span>');
+            printLine('  <span class="user">whoami</span>         - Show current user');
+            printLine('  <span class="user">date</span>           - Show current date');
+            printLine('  <span class="user">neofetch</span>       - System information display');
+            printLine('  <span class="user">uname -a</span>       - Kernel information');
+            printLine('  <span class="user">banner</span>         - Show welcome banner');
+            printLine('');
+            printLine('  <span style="color:#ffaa00">Personal:</span>');
+            printLine('  <span class="user">about</span>          - About Matin Abbasi');
+            printLine('  <span class="user">skills</span>         - Technical skills');
+            printLine('  <span class="user">contact</span>        - Contact information');
+            printLine('');
+            printLine('  <span style="color:#ffaa00">Appearance:</span>');
+            printLine('  <span class="user">themes</span>         - List available themes 🎨');
+            printLine('  <span class="user">theme</span> [name]   - Change terminal theme');
+            printLine('                       Available: dracula, monokai, nord,');
+            printLine('                       solarized, matrix, cyberpunk, default');
+            printLine('  <span class="user">crt</span> [on|off]   - Toggle CRT effect');
+            printLine('');
+            printLine('  <span style="color:#ffaa00">Misc:</span>');
+            printLine('  <span class="user">echo</span> [text]    - Echo text');
+            printLine('  <span class="user">man</span> [cmd]      - Manual pages');
+            printLine('  <span class="user">sudo</span>           - Administrator access 🔒</div>');
             break;
 
         case 'crt':
@@ -285,8 +370,38 @@ function executeCommand(input) {
             }
             break;
 
+        case 'themes':
+            printLine('<span style="color:#00ffff;font-weight:bold">╔══════════════════════════════════════════════════════════════╗</span>');
+            printLine('<span style="color:#00ffff;font-weight:bold">║</span>  <span style="color:#ffaa00;font-size:16px;font-weight:bold">🎨 Available Terminal Themes</span>                            <span style="color:#00ffff;font-weight:bold">║</span>');
+            printLine('<span style="color:#00ffff;font-weight:bold">╚══════════════════════════════════════════════════════════════╝</span>');
+            printLine('');
+            
+            const currentTheme = localStorage.getItem('terminal-theme') || DEFAULT_THEME;
+            for (const [key, theme] of Object.entries(THEMES)) {
+                const active = key === currentTheme ? ' <span style="color:#00ff00">✓ (active)</span>' : '';
+                printLine(`  <span style="color:#00ffff;font-weight:bold">${theme.name.padEnd(18)}</span> ${theme.description}${active}`);
+            }
+            printLine('');
+            printLine('Use <span class="user">theme [name]</span> to switch themes. Example: <span class="user">theme dracula</span>');
+            break;
+
         case 'theme':
-            printLine(`Terminal themes are fixed in this modal version.`);
+            if (args.length < 2) {
+                const currentTheme = localStorage.getItem('terminal-theme') || DEFAULT_THEME;
+                printLine(`Current theme: <span class="success">${THEMES[currentTheme].name}</span>`);
+                printLine('Use <span class="user">themes</span> to see all available themes.');
+                break;
+            }
+            
+            const themeName = args[1].toLowerCase();
+            if (THEMES[themeName]) {
+                applyTheme(themeName);
+                localStorage.setItem('terminal-theme', themeName);
+                printLine(`<span class="success">✓ Theme changed to ${THEMES[themeName].name}</span>`);
+            } else {
+                printLine(`<span class="error">Error: Theme '${themeName}' not found.</span>`);
+                printLine('Use <span class="user">themes</span> to see available themes.');
+            }
             break;
 
         case 'clear':
@@ -294,6 +409,15 @@ function executeCommand(input) {
             break;
 
         case 'sudo':
+            if (args.length < 2) {
+                printLine('<span class="error">usage: sudo [command]</span>');
+                printLine('Try "sudo help" for more information.');
+                break;
+            }
+            
+            // Store the command to execute after password
+            window.pendingSudoCommand = args.slice(1).join(' ');
+            
             printLine(`[sudo] password for matin: `);
             isWaitingForPassword = true;
             inputElement.type = 'password';
@@ -417,116 +541,100 @@ _)      \\.___.,|     .'
             break;
 
         case 'about':
-            printLine(`
-<div style="margin: 10px 0;">
-<span style="color:#00ffff;font-weight:bold">╔══════════════════════════════════════════════════════════════╗</span>
-<span style="color:#00ffff;font-weight:bold">║</span>  <span style="color:#ffaa00;font-size:18px;font-weight:bold">About Matin Abbasi</span>                                      <span style="color:#00ffff;font-weight:bold">║</span>
-<span style="color:#00ffff;font-weight:bold">╚══════════════════════════════════════════════════════════════╝</span>
-
-<span style="color:#00ff00">👤 Full Name:</span>     Matin Abbasi
-<span style="color:#00ff00">🎂 Born:</span>          April 01, 2004 (Age: ${getAge()})
-<span style="color:#00ff00">📍 Location:</span>      Isfahan, Iran 🇮🇷
-<span style="color:#00ff00">💼 Position:</span>      System Administrator & Software Developer
-<span style="color:#00ff00">🏢 Company:</span>       Pars Pack (<a href="https://parspack.com" style="color:#3b8eea">parspack.com</a>)
-<span style="color:#00ff00">🎓 Education:</span>     Azad University of NajafAbad
-                    Computer Engineering (2022 - Present)
-<span style="color:#00ff00">🌐 Website:</span>       <a href="https://blog.m4t1n.ir" style="color:#3b8eea">blog.m4t1n.ir</a>
-
-<span style="color:#ffaa00;font-weight:bold">About Me:</span>
-I'm a passionate system administrator and software developer based in Iran.
-Currently working at Pars Pack, I balance practical industry experience with
-academic exploration in fields like algorithms, operating systems, and AI.
-
-I build scalable backend systems, compete in coding competitions, and deliver
-technical presentations. From intelligent store management systems to
-containerized development environments.
-
-My goal: software that's robust, maintainable, and meaningful.
-</div>
-`);
+            printLine('<span style="color:#00ffff;font-weight:bold">╔══════════════════════════════════════════════════════════════╗</span>');
+            printLine('<span style="color:#00ffff;font-weight:bold">║</span>  <span style="color:#ffaa00;font-size:18px;font-weight:bold">About Matin Abbasi</span>                                      <span style="color:#00ffff;font-weight:bold">║</span>');
+            printLine('<span style="color:#00ffff;font-weight:bold">╚══════════════════════════════════════════════════════════════╝</span>');
+            printLine('');
+            printLine('<span style="color:#00ff00">👤 Full Name:</span>     Matin Abbasi');
+            printLine(`<span style="color:#00ff00">🎂 Born:</span>          April 01, 2004 (Age: ${getAge()})`);
+            printLine('<span style="color:#00ff00">📍 Location:</span>      Isfahan, Iran 🇮🇷');
+            printLine('<span style="color:#00ff00">💼 Position:</span>      System Administrator & Software Developer');
+            printLine('<span style="color:#00ff00">🏢 Company:</span>       Pars Pack (<span style="color:#3b8eea">parspack.com</span>)');
+            printLine('<span style="color:#00ff00">🎓 Education:</span>     Azad University of NajafAbad');
+            printLine('                    Computer Engineering (2022 - Present)');
+            printLine('<span style="color:#00ff00">🌐 Website:</span>       <a href="https://blog.m4t1n.ir" style="color:#3b8eea">blog.m4t1n.ir</a>');
+            printLine('');
+            printLine('<span style="color:#ffaa00;font-weight:bold">About Me:</span>');
+            printLine("I'm a passionate system administrator and software developer based in Iran.");
+            printLine('Currently working at Pars Pack, I balance practical industry experience with');
+            printLine('academic exploration in fields like algorithms, operating systems, and AI.');
+            printLine('');
+            printLine('I build scalable backend systems, compete in coding competitions, and deliver');
+            printLine('technical presentations. From intelligent store management systems to');
+            printLine('containerized development environments.');
+            printLine('');
+            printLine("My goal: software that's robust, maintainable, and meaningful.");
             break;
 
         case 'skills':
-            printLine(`
-<div style="margin: 10px 0;">
-<span style="color:#00ffff;font-weight:bold">╔══════════════════════════════════════════════════════════════╗</span>
-<span style="color:#00ffff;font-weight:bold">║</span>  <span style="color:#ffaa00;font-size:18px;font-weight:bold">Technical Skills</span>                                       <span style="color:#00ffff;font-weight:bold">║</span>
-<span style="color:#00ffff;font-weight:bold">╚══════════════════════════════════════════════════════════════╝</span>
-
-<span style="color:#ffaa00">⚡ Core Expertise:</span>
-
-  <span style="color:#00ff00">🐧 Linux System Administration</span>     [<span style="color:#00ff00">████████</span><span style="color:#333">██</span>] 80%
-     • Server management and configuration
-     • Shell scripting and automation
-     • System security and monitoring
-
-  <span style="color:#00ff00">🐍 Python Development</span>              [<span style="color:#00ff00">█████████</span><span style="color:#333">█</span>] 90%
-     • Backend development
-     • Automation scripts & data processing
-     • Algorithm implementation
-
-  <span style="color:#00ff00">🐳 DevOps & Infrastructure</span>         [<span style="color:#00ff00">███████</span><span style="color:#333">███</span>] 70%
-     • Docker containerization
-     • CI/CD pipelines
-     • Server deployment & optimization
-
-<span style="color:#ffaa00">🎨 Design & Frontend:</span>
-
-  <span style="color:#3b8eea">🎨 Web Design</span>                     [<span style="color:#3b8eea">████</span><span style="color:#333">██████</span>] 40%
-  <span style="color:#3b8eea">🖼️  Graphic Design</span>                 [<span style="color:#3b8eea">█████</span><span style="color:#333">█████</span>] 50%
-  <span style="color:#3b8eea">✨ Branding</span>                        [<span style="color:#3b8eea">█████████</span><span style="color:#333">█</span>] 90%
-  <span style="color:#3b8eea">📝 WordPress</span>                      [<span style="color:#3b8eea">█████</span><span style="color:#333">█████</span>] 50%
-
-<span style="color:#ffaa00">🛠️  Additional Skills:</span>
-  • Git & Version Control  • Database Management
-  • Network Engineering    • Problem Solving
-  • Technical Writing      • Team Collaboration
-</div>
-`);
+            printLine('<span style="color:#00ffff;font-weight:bold">╔══════════════════════════════════════════════════════════════╗</span>');
+            printLine('<span style="color:#00ffff;font-weight:bold">║</span>  <span style="color:#ffaa00;font-size:18px;font-weight:bold">Technical Skills</span>                                       <span style="color:#00ffff;font-weight:bold">║</span>');
+            printLine('<span style="color:#00ffff;font-weight:bold">╚══════════════════════════════════════════════════════════════╝</span>');
+            printLine('');
+            printLine('<span style="color:#ffaa00">⚡ Core Expertise:</span>');
+            printLine('');
+            printLine('  <span style="color:#00ff00">🐧 Linux System Administration</span>     [<span style="color:#00ff00">████████</span><span style="color:#333">██</span>] 80%');
+            printLine('     • Server management and configuration');
+            printLine('     • Shell scripting and automation');
+            printLine('     • System security and monitoring');
+            printLine('');
+            printLine('  <span style="color:#00ff00">🐍 Python Development</span>              [<span style="color:#00ff00">█████████</span><span style="color:#333">█</span>] 90%');
+            printLine('     • Backend development');
+            printLine('     • Automation scripts & data processing');
+            printLine('     • Algorithm implementation');
+            printLine('');
+            printLine('  <span style="color:#00ff00">🐳 DevOps & Infrastructure</span>         [<span style="color:#00ff00">███████</span><span style="color:#333">███</span>] 70%');
+            printLine('     • Docker containerization');
+            printLine('     • CI/CD pipelines');
+            printLine('     • Server deployment & optimization');
+            printLine('');
+            printLine('<span style="color:#ffaa00">🎨 Design & Frontend:</span>');
+            printLine('');
+            printLine('  <span style="color:#3b8eea">🎨 Web Design</span>                     [<span style="color:#3b8eea">████</span><span style="color:#333">██████</span>] 40%');
+            printLine('  <span style="color:#3b8eea">🖼️  Graphic Design</span>                 [<span style="color:#3b8eea">█████</span><span style="color:#333">█████</span>] 50%');
+            printLine('  <span style="color:#3b8eea">✨ Branding</span>                        [<span style="color:#3b8eea">█████████</span><span style="color:#333">█</span>] 90%');
+            printLine('  <span style="color:#3b8eea">📝 WordPress</span>                      [<span style="color:#3b8eea">█████</span><span style="color:#333">█████</span>] 50%');
+            printLine('');
+            printLine('<span style="color:#ffaa00">🛠️  Additional Skills:</span>');
+            printLine('  • Git & Version Control  • Database Management');
+            printLine('  • Network Engineering    • Problem Solving');
+            printLine('  • Technical Writing      • Team Collaboration');
             break;
 
         case 'contact':
-            printLine(`
-<div style="margin: 10px 0;">
-<span style="color:#00ffff;font-weight:bold">╔══════════════════════════════════════════════════════════════╗</span>
-<span style="color:#00ffff;font-weight:bold">║</span>  <span style="color:#ffaa00;font-size:18px;font-weight:bold">Contact Information</span>                                    <span style="color:#00ffff;font-weight:bold">║</span>
-<span style="color:#00ffff;font-weight:bold">╚══════════════════════════════════════════════════════════════╝</span>
-
-<span style="color:#00ff00">📧 Email:</span>       <a href="mailto:matinabbasi788@gmail.com" style="color:#3b8eea">matinabbasi788@gmail.com</a>
-<span style="color:#00ff00">📱 Phone:</span>       +98 914 036-2101
-<span style="color:#00ff00">🌐 Blog:</span>        <a href="https://blog.m4t1n.ir" style="color:#3b8eea" target="_blank">blog.m4t1n.ir</a>
-
-<span style="color:#ffaa00">🔗 Social Links:</span>
-
-  <span style="color:#fff">GitHub:</span>      <a href="https://github.com/matinabbasi788" style="color:#3b8eea" target="_blank">github.com/matinabbasi788</a>
-  <span style="color:#fff">LinkedIn:</span>    <a href="https://linkedin.com/in/matinabbasi" style="color:#3b8eea" target="_blank">linkedin.com/in/matinabbasi</a>
-
-<span style="color:#888">Feel free to reach out for collaboration or opportunities!</span>
-</div>
-`);
+            printLine('<span style="color:#00ffff;font-weight:bold">╔══════════════════════════════════════════════════════════════╗</span>');
+            printLine('<span style="color:#00ffff;font-weight:bold">║</span>  <span style="color:#ffaa00;font-size:18px;font-weight:bold">Contact Information</span>                                    <span style="color:#00ffff;font-weight:bold">║</span>');
+            printLine('<span style="color:#00ffff;font-weight:bold">╚══════════════════════════════════════════════════════════════╝</span>');
+            printLine('');
+            printLine('<span style="color:#00ff00">📧 Email:</span>       <a href="mailto:matinabbasi788@gmail.com" style="color:#3b8eea">matinabbasi788@gmail.com</a>');
+            printLine('<span style="color:#00ff00">📱 Phone:</span>       +98 914 036-2101');
+            printLine('<span style="color:#00ff00">🌐 Blog:</span>        <a href="https://blog.m4t1n.ir" style="color:#3b8eea" target="_blank">blog.m4t1n.ir</a>');
+            printLine('');
+            printLine('<span style="color:#ffaa00">🔗 Social Links:</span>');
+            printLine('');
+            printLine('  <span style="color:#fff">GitHub:</span>      <a href="https://github.com/matinabbasi788" style="color:#3b8eea" target="_blank">github.com/matinabbasi788</a>');
+            printLine('  <span style="color:#fff">LinkedIn:</span>    <a href="https://linkedin.com/in/matinabbasi" style="color:#3b8eea" target="_blank">linkedin.com/in/matinabbasi</a>');
+            printLine('');
+            printLine('<span style="color:#888">Feel free to reach out for collaboration or opportunities!</span>');
             break;
 
         case 'banner':
-            printLine(`
-<div style="margin: 10px 0;">
-<span style="color:#00ffff;font-weight:bold">═══════════════════════════════════════════════════════════════</span>
-<span style="color:#00ff00;font-weight:bold">    Welcome to Isfahan Linux 22.04 LTS (Matin Edition)</span>
-<span style="color:#00ffff;font-weight:bold">═══════════════════════════════════════════════════════════════</span>
-
-  <span style='color:#ffaa00'>👤 User:</span>       Matin Abbasi
-  <span style='color:#ffaa00'>💼 Position:</span>  System Administrator & Software Developer
-  <span style='color:#ffaa00'>🏢 Company:</span>   Pars Pack (https://parspack.com)
-  <span style='color:#ffaa00'>📍 Location:</span>  Isfahan, Iran
-  <span style='color:#ffaa00'>🎓 Education:</span> Computer Engineering, Azad University
-  <span style='color:#ffaa00'>🌐 Blog:</span>      blog.m4t1n.ir
-
-<span style="color:#00ffff;font-weight:bold">═══════════════════════════════════════════════════════════════</span>
-
-  💡 <span style='color:#ffff00'>Type <span style='color:#00ff00'>help</span> to see available commands</span>
-  💡 <span style='color:#ffff00'>Type <span style='color:#00ff00'>about</span> for detailed information</span>
-  💡 <span style='color:#ffff00'>Type <span style='color:#00ff00'>skills</span> to see technical expertise</span>
-</div>
-`);
+            printLine('<span style="color:#00ffff;font-weight:bold">═══════════════════════════════════════════════════════════════</span>');
+            printLine('<span style="color:#00ff00;font-weight:bold">    Welcome to Isfahan Linux 22.04 LTS (Matin Edition)</span>');
+            printLine('<span style="color:#00ffff;font-weight:bold">═══════════════════════════════════════════════════════════════</span>');
+            printLine('');
+            printLine('  <span style="color:#ffaa00">👤 User:</span>       Matin Abbasi');
+            printLine('  <span style="color:#ffaa00">💼 Position:</span>  System Administrator & Software Developer');
+            printLine('  <span style="color:#ffaa00">🏢 Company:</span>   Pars Pack (https://parspack.com)');
+            printLine('  <span style="color:#ffaa00">📍 Location:</span>  Isfahan, Iran');
+            printLine('  <span style="color:#ffaa00">🎓 Education:</span> Computer Engineering, Azad University');
+            printLine('  <span style="color:#ffaa00">🌐 Blog:</span>      blog.m4t1n.ir');
+            printLine('');
+            printLine('<span style="color:#00ffff;font-weight:bold">═══════════════════════════════════════════════════════════════</span>');
+            printLine('');
+            printLine('  💡 <span style="color:#ffff00">Type <span style="color:#00ff00">help</span> to see available commands</span>');
+            printLine('  💡 <span style="color:#ffff00">Type <span style="color:#00ff00">about</span> for detailed information</span>');
+            printLine('  💡 <span style="color:#ffff00">Type <span style="color:#00ff00">skills</span> to see technical expertise</span>');
             break;
 
         default:
@@ -585,6 +693,16 @@ function handleAutocomplete() {
             printLine(`${getPromptHTML()} ${inputVal}`);
             printLine(matches.join('  '));
         }
+    } else if (args[0] === 'theme' && args.length === 2) {
+        // Autocomplete theme names
+        const themeNames = Object.keys(THEMES);
+        const matches = themeNames.filter(t => t.startsWith(toComplete));
+        if (matches.length === 1) {
+            inputElement.value = 'theme ' + matches[0];
+        } else if (matches.length > 1) {
+            printLine(`${getPromptHTML()} ${inputVal}`);
+            printLine(matches.map(t => `<span style="color:#00ffff">${t}</span>`).join('  '));
+        }
     } else {
         const lastSlashPos = toComplete.lastIndexOf('/');
         let dirPathStr = lastSlashPos !== -1 ? toComplete.substring(0, lastSlashPos) : '.';
@@ -613,6 +731,38 @@ function handleAutocomplete() {
     }
 }
 
+/**
+ * Apply theme to terminal
+ * @param {string} themeName - Name of the theme to apply
+ */
+function applyTheme(themeName) {
+    const theme = THEMES[themeName];
+    if (!theme) return;
+    
+    // Apply theme colors to terminal body
+    terminalBody.style.backgroundColor = theme.background;
+    terminalBody.style.color = theme.foreground;
+    
+    // Apply to input
+    inputElement.style.color = theme.foreground;
+    inputElement.style.caretColor = theme.user;
+    
+    // Update CSS custom properties for dynamic elements
+    document.documentElement.style.setProperty('--theme-user', theme.user);
+    document.documentElement.style.setProperty('--theme-path', theme.path);
+    document.documentElement.style.setProperty('--theme-error', theme.error);
+    document.documentElement.style.setProperty('--theme-success', theme.success);
+    document.documentElement.style.setProperty('--theme-warning', theme.warning);
+    document.documentElement.style.setProperty('--theme-info', theme.info);
+    document.documentElement.style.setProperty('--theme-prompt', theme.prompt);
+    document.documentElement.style.setProperty('--theme-foreground', theme.foreground);
+    document.documentElement.style.setProperty('--theme-background', theme.background);
+}
+
 function initTerminal() {
+    // Load and apply saved theme
+    const savedTheme = localStorage.getItem('terminal-theme') || DEFAULT_THEME;
+    applyTheme(savedTheme);
+    
     bootSequence();
 }
