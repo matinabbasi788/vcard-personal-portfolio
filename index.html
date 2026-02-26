@@ -260,14 +260,14 @@
             belief that technology should be as empowering as it is elegant.
           </p>
         </section>
-        <section class="about-text">
+        <!-- <section class="about-text">
           <h1>My Telegram Channel</h1>
           <!-- ©Nirmal Dev - Cyber Yakku TM -->
-          <a href="https://t.me/computermemes" target="_blank" rel="noopener noreferrer">
+          <!-- <a href="https://t.me/computermemes" target="_blank" rel="noopener noreferrer">
             <img src="https://social-card.kawwa.site/api/telegram?username=computermemes&theme=dark"
               alt="Telegram Profile" style="width: 400px; max-width: 100%; height: auto;" />
           </a>
-        </section>
+        </section> -->
 
 
 
@@ -1477,10 +1477,41 @@
 
   </main>
 
+  <!--
+    - Terminal Button (Floating)
+  -->
+  <button class="terminal-fab" id="terminalFab" title="Open Terminal">
+    <ion-icon name="terminal-outline"></ion-icon>
+  </button>
 
-
-
-
+  <!--
+    - Terminal Modal
+  -->
+  <div class="terminal-modal" id="terminalModal">
+    <div class="terminal-container">
+      <div class="terminal-header">
+        <div class="terminal-title">
+          <ion-icon name="terminal-outline"></ion-icon>
+          <span>matin@parspack:~</span>
+        </div>
+        <div class="terminal-controls">
+          <button class="terminal-control minimize">_</button>
+          <button class="terminal-control maximize">□</button>
+          <button class="terminal-control close" id="terminalClose">×</button>
+        </div>
+      </div>
+      <div class="terminal-body">
+        <div class="crt-overlay" id="crt-overlay"></div>
+        <div id="terminal-output"></div>
+        <div id="input-line">
+          <span class="prompt-static" id="prompt-container">
+            <span class="user">matin@parspack</span>:<span class="path" id="current-path-display">~</span>$
+          </span>
+          <input type="text" id="command-input" autocomplete="off" spellcheck="false">
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!--
     - custom js link
@@ -1492,6 +1523,13 @@
   -->
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+  <!--
+    - Terminal Scripts (loaded in order)
+  -->
+  <script src="./assets/js/terminal-data.js"></script>
+  <script src="./assets/js/terminal.js"></script>
+  <script src="./assets/js/terminal-modal.js"></script>
 
 </body>
 
